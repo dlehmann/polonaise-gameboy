@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Polonaise – Pocket Disco for the Game Boy</title>
+<meta name="description" content="Polonaise, the disco conga line to dance along with, as a real ROM for the original Game Boy – playable right here on the page.">
+<meta property="og:title" content="Polonaise – Pocket Disco">
+<meta property="og:description" content="Lead the conga line across the dance floor. A real Game Boy ROM, playable in your browser.">
+<meta property="og:image" content="img/poster.webp">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="lights" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+
+<header class="hero">
+  <div class="intro">
+    <p class="kicker">A ROM for the original Game Boy</p>
+    <h1>Polonaise</h1>
+    <p class="tagline">The disco conga line in your pocket. Lead the line across the dance floor, touch the guests and
+      they join in. Mind the walls, the furniture and your own tail!</p>
+
+    <div class="cta">
+      <a class="btn btn-main" href="polonaise.gb" download>Download the ROM <small>polonaise.gb · 32 KB</small></a>
+      <a class="btn" href="https://github.com/dlehmann/polonaise-gameboy">Source code</a>
+    </div>
+
+    <dl class="keys" aria-label="Keyboard controls">
+      <div><dt><kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd></dt><dd>steer</dd></div>
+      <div><dt><kbd>X</kbd></dt><dd>A · continue</dd></div>
+      <div><dt><kbd>Z</kbd></dt><dd>B · back</dd></div>
+      <div><dt><kbd>Enter</kbd></dt><dd>Start · pause</dd></div>
+      <div><dt><kbd>Shift</kbd></dt><dd>Select · language, quit</dd></div>
+    </dl>
+    <p class="hint">Click the handheld to play with the keyboard – or tap its buttons.</p>
+  </div>
+
+  <div class="stage">
+    <div class="ball" aria-hidden="true"><img src="img/ball.webp" width="180" height="180" alt=""></div>
+    <div class="device" id="device" tabindex="0" aria-label="Playable handheld with Polonaise">
+      <div class="top">
+        <button class="switch" id="switch" type="button" aria-label="Power on or off"><span></span></button>
+        <span class="brandline">DISCOWARE</span>
+      </div>
+      <div class="bezel">
+        <span class="led" aria-hidden="true"></span>
+        <span class="bezel-label">POLONAISE · DOT MATRIX DANCE FLOOR</span>
+        <div class="lcd">
+          <canvas id="screen" width="160" height="144"></canvas>
+          <button class="power" id="power" type="button">
+            <span class="power-icon" aria-hidden="true">▶</span>
+            <span>Play</span>
+            <small>with sound</small>
+          </button>
+          <p class="failed-msg">The ROM could not be loaded.<br>Open the page from a web server.</p>
+        </div>
+      </div>
+      <p class="logo">Polonaise <em>pocket</em></p>
+      <div class="controls">
+        <div class="pad" id="pad" data-dir="" aria-label="D-pad">
+          <span class="arm h"></span><span class="arm v"></span><span class="hub"></span>
+        </div>
+        <div class="ab">
+          <button type="button" class="round b" data-btn="b" aria-label="B">B</button>
+          <button type="button" class="round a" data-btn="a" aria-label="A">A</button>
+        </div>
+      </div>
+      <div class="pills">
+        <button type="button" class="pill" data-btn="select" aria-label="Select"><span>SELECT</span></button>
+        <button type="button" class="pill" data-btn="start" aria-label="Start"><span>START</span></button>
+      </div>
+      <div class="grille" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <button class="mute" id="mute" type="button" aria-pressed="false" aria-label="Sound on or off">♪</button>
+    </div>
+    <div class="floor" aria-hidden="true"></div>
+  </div>
+</header>
+
+<main>
+  <section class="how">
+    <h2><span>How to dance</span></h2>
+    <ol class="steps">
+      <li><b>Pick a direction.</b> The line waits for the first step, then dances to the beat.</li>
+      <li><b>Touch the guests.</b> Every guest you touch joins the end of the line – one after the other for a combo up to ×5.</li>
+      <li><b>Catch the shy ones.</b> They run when you come close. Golden stars are worth 500 points.</li>
+      <li><b>Don't crash.</b> A wall, a table or your own line costs a life and half of the polonaise.</li>
+      <li><b>Fill the line.</b> Enough dancers clear the song – the next one is longer and faster. Endless songs.</li>
+    </ol>
+  </section>
+
+  <section class="tonight">
+    <figure class="poster">
+      <img src="img/poster.webp" width="1000" height="520" loading="lazy"
+           alt="Polonaise Guy in his white suit points up, the mirror ball sparkles and a line of dancers holds on to each other on a lit dance floor">
+    </figure>
+    <div class="sign">
+      <p class="neon" aria-hidden="true"><span>Tonight</span> <span class="live">Live</span></p>
+      <h2 class="plain">Grab a shoulder. Join the line!</h2>
+      <p>The club is packed, the DJ is spinning and the mirror ball is turning. Polonaise Guy leads the
+        polonaise – and now the dance floor fits in your pocket.</p>
+      <p class="presents">A <b>DISCOWARE</b> release</p>
+    </div>
+  </section>
+
+  <section class="elsewhere">
+    <h2><span>Take it with you</span></h2>
+    <p>The ROM runs in any Game Boy emulator – <a href="https://mgba.io/">mGBA</a>,
+      <a href="https://sameboy.github.io/">SameBoy</a>, BGB – and on real hardware with a flash cartridge.
+      The handheld on this page is a small emulator written in plain JavaScript just for this game: no plugins,
+      nothing loaded from other servers.</p>
+    <a class="btn btn-main" href="polonaise.gb" download>Download polonaise.gb</a>
+  </section>
+</main>
+
+<footer>
+  <span class="brand">DISCOWARE</span>
+  <p>Polonaise also exists as a <a href="https://dlehmann.github.io/polonaise-remake/">browser game</a> and for the
+    <a href="https://dlehmann.github.io/polonaise/">Commodore 64</a>.
+    Game Boy is a trademark of Nintendo; this is an unofficial fan project. Discoware is made up – there never
+    was such a company. The game is real.</p>
+  <nav>
+    <a href="https://github.com/dlehmann/polonaise-gameboy">Source code</a>
+    <a href="impressum.html" lang="de">Impressum &amp; Datenschutz</a>
+  </nav>
+</footer>
+
+<script src="gb.js"></script>
+<script src="play.js"></script>
+</body>
+</html>
