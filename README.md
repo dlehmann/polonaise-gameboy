@@ -65,7 +65,8 @@ on the noise channel; the effects (modelled on the C64 version) have channel 1 t
 noise channel for a moment when they need it.
 
 In later songs, with a long polonaise and a fast beat, the Game Boy does not always manage a whole tick per
-frame: songs 1–6 run at 96–100 % speed, later ones at about 90 %.
+frame: songs 1–6 run at 96–100 % speed, later ones at about 90 %. The music always keeps its tempo: it is
+played in the vertical blank interrupt, not in the game loop.
 
 Not carried over: the mirror ball light spots, the glowing band under the polonaise, the gliding movement.
 
@@ -123,6 +124,9 @@ Notes on the Game Boy and SDCC, learnt the hard way:
   and the write – otherwise an interrupt in between can make the write miss.
 - SDCC 4.4 compiled `if (a != b) { a = b; ... }` for the status line into storing the *difference*; the
   assignments there come last now (see `hud()`).
+- The music runs in the vertical blank interrupt (`add_VBL(sound_tick)`), the functions the game calls change
+  its state with interrupts off. Played from the game loop, it lost a frame whenever the loop did – most of
+  all on the summary screen, where everyone dances to the beat.
 - Divisions and multiplications of 32-bit numbers take thousands of cycles: numbers are turned into digits by
   subtraction, and the per-frame code avoids them. The people are redrawn only when something changed, the
   floor lights and the status lines wait for a frame with time to spare.
@@ -130,7 +134,7 @@ Notes on the Game Boy and SDCC, learnt the hard way:
 ## Tests
 
 `tools/autoplay.py` plays in PyBoy by itself (it reads the game state from the RAM and steers to the nearest
-guest), takes screenshots and reports the speed per song; `tools/run.py` plays a fixed script of button
+guest), takes screenshots and reports the speed per song and the tempo of the music per phase; `tools/run.py` plays a fixed script of button
 presses and takes screenshots or records the sound:
 
 ```

@@ -5,17 +5,21 @@
  * so the steps take 7 and 8 ticks in turn. Channel 2 plays the chord stabs (as a fast
  * arpeggio) and the melody, channel 3 the bass, channel 4 the drums. The effects are small
  * programs for channel 1; noise in an effect borrows channel 4 from the drums.
+ *
+ * sound_tick() runs in the vertical blank interrupt, so the music keeps its tempo when the
+ * game needs more than a frame for a tick; the functions called by the game change the
+ * state with interrupts off.
  */
 #include <gb/gb.h>
 #include <gb/hardware.h>
 #include "sound.h"
 #include "music.h"
 
-static uint8_t playing;
+static volatile uint8_t playing;
 static uint8_t pos, wait, bass_gate, v2_gate, arp, arp_tick;
 /* the beat counter for the animations: steps since the start */
-uint8_t music_step;
-uint8_t beat;
+volatile uint8_t music_step;
+volatile uint8_t beat;
 
 static const uint8_t *sfx;
 static uint8_t sfx_wait, sfx_vol, sfx_duty, sfx_noise, sfx_prio_now;
@@ -42,6 +46,9 @@ void sound_init(void)
     NR22_REG = 0;
     NR32_REG = 0;
     NR42_REG = 0;
+    CRITICAL {
+        add_VBL(sound_tick);
+    }
 }
 
 static void ch2_note(uint8_t n, uint8_t env)
@@ -118,12 +125,14 @@ static void music_event(void)
 
 void music_start(void)
 {
-    if (playing)
-        return;
-    playing = 1;
-    pos = 0;
-    wait = 1;
-    v2_gate = bass_gate = 0;
+    CRITICAL {
+        if (!playing) {
+            pos = 0;
+            wait = 1;
+            v2_gate = bass_gate = 0;
+            playing = 1;
+        }
+    }
 }
 
 /* continues where the music was stopped (after the pause) */
@@ -134,13 +143,15 @@ void music_resume(void)
 
 void music_stop(void)
 {
-    playing = 0;
-    NR22_REG = 0;
-    NR24_REG = 0x80;
-    NR32_REG = 0;
-    if (!sfx_noise) {
-        NR42_REG = 0;
-        NR44_REG = 0x80;
+    CRITICAL {
+        playing = 0;
+        NR22_REG = 0;
+        NR24_REG = 0x80;
+        NR32_REG = 0;
+        if (!sfx_noise) {
+            NR42_REG = 0;
+            NR44_REG = 0x80;
+        }
     }
 }
 
@@ -151,19 +162,21 @@ uint8_t music_playing(void)
 
 void sfx_play(uint8_t n)
 {
-    if (sfx && sfx_prio[n] < sfx_prio_now)
-        return;
-    sfx_prio_now = sfx_prio[n];
-    if (sfx_noise) {
-        NR42_REG = 0;
-        NR44_REG = 0x80;
-        sfx_noise = 0;
+    CRITICAL {
+        if (!sfx || sfx_prio[n] >= sfx_prio_now) {
+            sfx_prio_now = sfx_prio[n];
+            if (sfx_noise) {
+                NR42_REG = 0;
+                NR44_REG = 0x80;
+                sfx_noise = 0;
+            }
+            sfx = sfx_programs[n - 1];
+            sfx_wait = 0;
+            slide_n = 0;
+            sfx_vol = 0xa0;
+            sfx_duty = 0x80;
+        }
     }
-    sfx = sfx_programs[n - 1];
-    sfx_wait = 0;
-    slide_n = 0;
-    sfx_vol = 0xa0;
-    sfx_duty = 0x80;
 }
 
 static void ch1(uint16_t x, uint8_t trigger)

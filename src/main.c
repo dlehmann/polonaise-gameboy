@@ -28,7 +28,6 @@ static void frame(void)
     uint8_t k;
 
     vsync();
-    sound_tick();
     k = joypad();
     pressed = k & ~keys;
     keys = k;

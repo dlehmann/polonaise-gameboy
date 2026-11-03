@@ -8,8 +8,8 @@
 #include "music.h"
 
 /* 16ths of the music played so far, and beats (for the animations) */
-extern uint8_t music_step;
-extern uint8_t beat;
+extern volatile uint8_t music_step;
+extern volatile uint8_t beat;
 
 void sound_init(void);
 void sound_tick(void);

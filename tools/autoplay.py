@@ -102,6 +102,10 @@ last_timer = None
 held = None
 waiting = 0
 per_song = collections.defaultdict(lambda: [0, 0])
+# the speed of the music per phase: 16ths played per frame, 2 per 15 frames at full speed
+MUSIC = addr('_beat') - 1         # music_step (the map cuts the names after 8 characters)
+per_phase = collections.defaultdict(lambda: [0, 0])
+last_step = None
 for f in range(FRAMES):
     if held:
         pyboy.button_release(held)
@@ -113,6 +117,11 @@ for f in range(FRAMES):
         per_song[st['song']][0] += 1
         per_song[st['song']][1] += timer - last_timer
     last_timer = timer
+    step = mem[MUSIC]
+    if last_step is not None and st['phase'] < 4:
+        per_phase[st['phase']][0] += 1
+        per_phase[st['phase']][1] += (step - last_step) & 0xff
+    last_step = step
     if f % 600 == 0:
         print(f, st, flush=True)
     if GIF[0] <= f < GIF[1]:
@@ -140,6 +149,8 @@ for f in range(FRAMES):
 print('end', state())
 print('ticks per frame in PLAY:', sorted(lost.items()))
 print('speed per song:', ' '.join('%d:%.0f%%' % (k, 100.0 * v[1] / v[0]) for k, v in sorted(per_song.items())))
+print('music speed per phase:', ' '.join('%d:%.0f%%' % (k, 100.0 * v[1] / v[0] * 15 / 2)
+                                         for k, v in sorted(per_phase.items()) if v[0] > 30))
 if work:
     print('lines from game_tick to vsync:', sorted(work.items()))
 if os.environ.get('DUMP'):
