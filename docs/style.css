@@ -29,7 +29,7 @@ body {
     color: var(--text);
     font: 17px/1.6 var(--body);
     background: radial-gradient(ellipse 120% 70% at 50% 0%, var(--night-2), var(--night) 70%);
-    overflow-x: hidden;
+    overflow-x: clip;
 }
 a { color: var(--cyan); }
 a:hover { color: var(--pink); }
